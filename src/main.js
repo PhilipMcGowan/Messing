@@ -1,15 +1,9 @@
 var game;
 
 function showStartScreen(){
-	console.log("HELLO");
-	mCanvas = $("#myCanvas")[0];
-	mCtx = mCanvas.getContext("2d");
-	canvasWidth = parseInt(mCanvas.width);  
-    canvasHeight = parseInt(mCanvas.height);
+	setUpCanvas();
     backgroundImg = $("#MenuScreen")[0];
-	mCtx.drawImage(backgroundImg,0,0,canvasWidth, canvasHeight);
 	backgroundImg.style.zIndex = -10;
-    console.log("HELLO1");
 
     window.addEventListener('keydown',handleKeyDown,true);   
     window.addEventListener('keyup',handleKeyUp,true); 
@@ -36,7 +30,7 @@ function showStartScreen(){
 
 	function update(){
 		mCtx.clearRect(0,0,canvasWidth, canvasHeight);
-		mCtx.drawImage(backgroundImg,0,0,canvasWidth, canvasHeight);
+		mCtx.drawImage(backgroundImg,0,0, backgroundImg.width, backgroundImg.height);
 		mCtx.strokeStyle = "red";
 
 		if(menuKeys[13]){ //enter pressed
@@ -51,5 +45,12 @@ function showStartScreen(){
 		var now = new Date();
 		incT = now - oldT;
 		oldT = now;
+	}
+
+	function setUpCanvas(){
+		mCanvas = $("#myCanvas")[0];
+		mCtx = mCanvas.getContext("2d");
+		canvasWidth = parseInt(mCanvas.width);  
+    	canvasHeight = parseInt(mCanvas.height);
 	}
 }

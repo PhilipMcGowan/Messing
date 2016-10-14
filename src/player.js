@@ -26,6 +26,14 @@ function Player(){
 	this.moveUD = function(goingUp){
 		playerPos[1] += goingUp;
 	}
+
+	this.getPosition = function(i){
+		return playerPos[i];
+	}
+
+	this.getInitialPos = function(){
+		return playerPos;
+	}
 	//this.use()
 	//this.showInventory()
 };

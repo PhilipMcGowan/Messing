@@ -2,6 +2,10 @@ function Game(){
 	var mOldTime;
 	var incTime;
 
+	//camera
+	var baseOffset;
+	var offset;
+
 	var mCanvas;
 	var mCtx;
 	var CanvasHeight;
@@ -23,6 +27,8 @@ function Game(){
         levelWidth = new Array(4000, 5000);
         p1 = new Player();
         p1.createPlayer(30,40);
+        baseOffset = p1.getInitialPos();
+		offset = baseOffset;
         mOldTime = new Date();
         window.addEventListener('keydown',handleKeyDown,true);   
         window.addEventListener('keyup',handleKeyUp,true); 
@@ -31,10 +37,28 @@ function Game(){
 	this.update = function(){
 		//calcIncTime();
 		controls();
+		gameUpdate();	
+	}
+
+	function gameUpdate(){
+		//get offset for camera coordinates based on player position
+		for(var i = 0; i < 2; i++){
+			offset[i] = p1.getPosition(i);
+			if(offset[i] < baseOffset[i])
+				offset[i] = baseOffset[i];
+		}
 		mCtx.save();
+		//clear the canvas of all drawings
 		mCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-		mCtx.drawImage(backgroundImg,0,0,levelWidth[0]+canvasWidth/2, canvasHeight);
-		console.log(levelWidth[0]);
+
+		//translate camera if required
+		if(offset[0] > canvasWidth / 2 + 1)
+			mCtx.translate(-(offset[0] - canvasWidth/2), 0);
+		if(offset[1] > canvasHeight / 2 + 1)
+			mCtx.translate(0, -(offset[1] - canvasHeight/2));
+		//draw background image
+		mCtx.drawImage(backgroundImg,0,0,backgroundImg.width, backgroundImg.height);
+
 		p1.draw(mCtx);
 		mCtx.restore();
 	}
