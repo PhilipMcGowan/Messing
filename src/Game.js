@@ -12,10 +12,17 @@ function Game(){
 	var CanvasWidth;
 	var backgroundImg;
 	var levelWidth;
+	var levelHeight;
+	var currentLevel = 0;
 
 	var p1;
 
 	var keys = [];
+
+	//used to check how much time has passed between moves
+	//used to keep movement on the 16*16 grid
+	var moveTimer = 0;
+	var moveTimerDefault = 50;
 
 	this.init = function(){
 		mCanvas = $("#myCanvas")[0];
@@ -25,8 +32,9 @@ function Game(){
 		canvasWidth = parseInt(mCanvas.width);  
         canvasHeight = parseInt(mCanvas.height); 
         levelWidth = new Array(4000, 5000);
+        levelHeight = new Array(1280, 1920);
         p1 = new Player();
-        p1.createPlayer(30,40);
+        p1.createPlayer(32,32);
         baseOffset = p1.getInitialPos();
 		offset = baseOffset;
         mOldTime = new Date();
@@ -35,9 +43,22 @@ function Game(){
 	}
 
 	this.update = function(){
-		//calcIncTime();
+		calcIncTime();
+		handleTimers();
 		controls();
 		gameUpdate();	
+	}
+
+	function countdownTimer(timer, inc){
+		timer -= incTime;
+		if(timer < 0)
+			timer = 0;
+		return timer;
+	}
+
+	function handleTimers(){
+		if (moveTimer > 0)
+			moveTimer = countdownTimer(moveTimer, incTime);
 	}
 
 	function gameUpdate(){
@@ -86,13 +107,28 @@ function Game(){
 	});
 
 	function controls(){
-		if (keys[37] || keys[65]) //left arrow or a
+		if ((keys[37] || keys[65]) && moveTimer == 0) { //left arrow or a
 			p1.moveLR(-1);
-        else if (keys[39] || keys[68])  //right arrow or d
+			moveTimer = moveTimerDefault;
+		}
+        else if ((keys[39] || keys[68]) && moveTimer == 0) { //right arrow or d
 			p1.moveLR(1);
-		if(keys[83] || keys[40]) //left arrow or s
+			moveTimer = moveTimerDefault;
+		}
+		if ((keys[83] || keys[40]) && moveTimer == 0) {//left arrow or s
 			p1.moveUD(1);
-		else if (keys[38] || keys[87])//up arrow or w
+			moveTimer = moveTimerDefault;
+		}
+		else if ((keys[38] || keys[87]) && moveTimer == 0) {//up arrow or w
 			p1.moveUD(-1);
+			moveTimer = moveTimerDefault;
+		}
 	}
+
+	//global function. mainly for use in the player class after moving
+	this.getLevelBounds = function(){
+		var bounds = new Array(levelWidth[currentLevel], levelHeight[currentLevel]);
+		return bounds; 
+	}
+
 }
